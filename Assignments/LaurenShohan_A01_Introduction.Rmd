@@ -22,15 +22,15 @@ Enter answers to the questions just below the >Answer: prompt.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I have taken one R class in my undergrad which was about using R applications in Psychology, I have taken a data science class in Python, and have no experience with Git. 
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: I feel confident in my abilities to be able to code and learn more techniques in the R language. I am excited to refresh my R skills and see what I can accomplish in this class.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: I feel a bit apprehensive trying to use GitHub/Git, I am not sure I fully understand all the linkage between R and GitHub. All my previous classes have just been using the individual coding app and submitting a file. I feel as if I will do something wrong with pushing and committing to Git for each file and mess it all up!
 
 
 ## 2) GitHub
