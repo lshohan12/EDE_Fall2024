@@ -104,7 +104,7 @@ You can create R objects with an *assignment* statement. The indicator for an as
 A quick note: in many situations, a `=` sign will substitute for a `<-`. Resist this temptation! This will be confusing later, when `=` means something else.
 
 ```{r}
-x <- 3*4
+x
 ```
 
 Now, call up the object `x`. Notice that `x` has also just shown up in your Environment tab.
@@ -138,6 +138,7 @@ Within your R code, it is often useful to include notes about your workflow. So 
 # I am demonstrating a comment here. 
 
 1 + 1 # This is a simple math problem
+# 1 + 1
 ```
 
 ### Functions
@@ -190,6 +191,9 @@ recipe2 <- function(x){
 
 doublesimplemeal <- recipe2(6)
 doublesimplemeal
+#the dollar sign at the end - $ means one of the objects in a list so
+# if i want a specific object in list i can go -> doublesimplemeal$mix1
+doublesimplemeal$mix1
 ```
 
 Two double ingredient recipes, baked at the same time:
@@ -239,8 +243,6 @@ recipe6 <- function(x){
   
 }
 
-meal4 <- recipe6(4); meal4
-meal5 <- recipe6(2); meal5
 ```
 
 ### Getting help within R
