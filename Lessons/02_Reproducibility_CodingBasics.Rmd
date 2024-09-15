@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 title: "2: Reproducibility and Coding Basics"
 subtitle: "Environmental Data Analytics"
 author: "John Fay and Luana Lima | Developed by Kateri Salk"
@@ -89,12 +94,14 @@ pi
 mean(5, 4, 6, 4, 6)
 median(5, 4, 6, 4, 6)
 
-# Conditional statements
+# Conditional statements 
 4 > 5
 4 < 5
 4 != 5
 4 == 5
 
+colors <- c('Red','Blue','Green')
+colors
 ```
 
 ### Objects
@@ -104,13 +111,13 @@ You can create R objects with an *assignment* statement. The indicator for an as
 A quick note: in many situations, a `=` sign will substitute for a `<-`. Resist this temptation! This will be confusing later, when `=` means something else.
 
 ```{r}
-x
+
 ```
 
 Now, call up the object `x`. Notice that `x` has also just shown up in your Environment tab.
 
 ```{r}
-x
+
 ```
 
 ### Naming
