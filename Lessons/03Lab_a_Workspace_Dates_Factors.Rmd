@@ -3,6 +3,8 @@ title: "Lab 3b - Workspaces, Dates, and Factors"
 author: "Environmental Data Analytics | John Fay and Luana Lima "
 date: "Fall 2024"
 output: pdf_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Objectives
@@ -44,7 +46,7 @@ library(here) #Note this package may conflict with plyr and lubridate
 here() 
 
 #`here()` is not affected by the setwd() command
-setwd('./data')
+setwd('./Data') #warning 
 getwd()
 here()
 
@@ -52,7 +54,7 @@ here()
 setwd(here())
 
 #Arguments in the `here()` command allow easy navigation within subfolders
-filename <- here('Data','Raw','USGS_Site02085000_Flow_Raw.csv')
+filename <- here('Data','Raw','USGS_Site02085000_Flow_Raw.csv') #instead of , can do / aka paths
 print(filename)
 
 #See whether the file exists
@@ -65,7 +67,7 @@ usgs_flow_data <- read.csv(
 )
 
 #Create and print a list of all files in a folder using "dir" and "here"
-filenames <- dir(here('Data','Raw'),pattern = ("*.csv"))
+filenames <- dir(here('Data','Raw'),pattern = ("*.csv")) #dir command - looks in data raw folder with everything with this pattern so all csv files
 print(filenames)
 ```
 
@@ -102,7 +104,7 @@ Remember formatting of dates in R:
 # (code must be uncommented)
 today <- Sys.Date()
 format(today, format = "%B")
-#format(today, format = "")
+format(today, format = "%m")
 #format(today, format = "")
 #format(today, format = "")
 
@@ -115,7 +117,7 @@ Install and load the package lubridate into your R session. Lubridate offers fas
 More info on lubridate [here][<https://cran.r-project.org/web/packages/lubridate/lubridate.pdf>].
 
 ```{r DateExercise1}
-#install.packages("lubridate")
+#install.packages("lubridate") --- always need to comment out install demands for knitting and in general
 library(lubridate)
 
 #Ex1
@@ -132,30 +134,34 @@ date_obj_today
 
 #Ex_3 - on your own...
 str_juneteenth <- "19 June 1865"
-#Since the format is month-day-year we will use function mdy()
-#date_juneteenth <- ()
-#date_juneteenth
+#Since the format is day month year we will use function dmy()
+date_juneteenth <- dmy(str_juneteenth) 
+date_juneteenth #spits out 1865-06-19
 ```
 ### The century issue
 
 What happens when you the year in your date column is represented by two digits? Is "55" 2055 or 1955?? Here we build code to deal with that issue. 
 
 ```{r DateExercise2}
-#century issue
+#century issue - its giving 2055 'future data' when it should be 1955
 str_past <- "55-feb-3"
 date_obj_past <- ymd(str_past)
 date_obj_past
 
+cutoff <- 24
 #Build a function to fix year that is more general than the one discussed in the lesson
 fix.early.dates <- function(d, cutoff) {
   
        m <- year(d) %% 100  
        # The %% operator does modular division i.e. integer-divides 
        # year(d) by 100 and returns the remainder 
+           #gonna take the year of the date object which is 2055 - and then it does modular division and just
+          #gives last bit of year so it returns 55 and strips off century
        
-       year(d) <- ifelse(m > cutoff, 1900+m, 2000+m)  
+       year(d) <- ifelse(m > cutoff, 1900+m, 2000+m)  #true then false
        # This will update year(d), year() is the lubridate function that  
        # returns the year for a date object
+            #takes the year cutoff of 55 for example - 
        return(d)
 }
 
@@ -168,11 +174,12 @@ fixed_date_obj_past
 
 
 ```{r centuryfix}
-#Fix for century issue
+#Fix for century issue - more shorter ways to fix dates
 str_past <- "55-feb-3"
 
 #Alternative 1
-date_obj_past <- fast_strptime(str_past,"%y-%b-%d",cutoff_2000=24L)
+date_obj_past <- fast_strptime(str_past,"%y-%b-%d",cutoff_2000=24L) 
+                #L is there so its not treated as floating point, L makes it be read as integer
 date_obj_past
 
 #Alternative 2
@@ -198,14 +205,14 @@ lubridate::origin
 
 ```{r setup, message = FALSE, warning = FALSE}
 #Read packages
-library(tidyverse);library(lubridate); library(here)
+library(tidyverse);library(lubridate); library(here) #seperate with ;
 
 #Read in data, don't convert strings to factors
 sites <- read.csv(here('Data/Raw/NWIS_SiteFlowData_NE_RAW.csv'))
 dim(sites)
 
 #Convert date column to date object
-sites$date <- ymd_hms(sites$date)
+sites$date <- ymd_hms(sites$date) #converting date hms - hour/min/sec in our data file
 
 ```
 
@@ -216,13 +223,13 @@ Note: `wday` is a `lubridate()` function...
 ```{r create and explore days of week column}
 
 #Compute the day of the week each sample was collected 
-sites$dow <- wday(sites$date)
+sites$dow <- wday(sites$date) #dow is days of week - extracts the weekday
 
 ## What class is the dow column?
 class(sites$dow)
 
 #List the unique values in the column
-unique(sites$dow)
+unique(sites$dow) #shows unique values
 
 #Summary - is it meaningful?
 summary(sites$dow)
@@ -230,10 +237,11 @@ summary(sites$dow)
 ```
 
 ### Convert the days of the week to a factor
+week days arent number - factors are categorical variables and helpful
 ```{r convert dow column to factor and explore}
 
 #Convert to a factor
-sites$dow <- factor(sites$dow)
+sites$dow <- factor(sites$dow) #updates from num to factor and has 3 levels now 
 
 ## What class is the dow column now?
 class(sites$dow)
@@ -242,10 +250,11 @@ class(sites$dow)
 unique(sites$dow)
 
 #Summary - is it meaningful?
-summary(sites$dow)
+summary(sites$dow) #here are the counts - 1 record on day 3 and 148 on day 4 - so different
+                 #info now that its a factor
 
 #Show the levels associated with our factor column
-levels(sites$dow)
+levels(sites$dow) #unique values
 ```
 
 ### Factors & Levels
@@ -261,7 +270,7 @@ A **factor** is a grouping variable: rows with the same value in the factor colu
 ```{r plot samples recorded each day of the week}
 #Create a bar plot showing the count of samples by day of week
 ggplot(sites,aes(x=dow)) +
-  geom_bar()
+  geom_bar()  #ggplot - data, aesthetics of how to paint so x axis is dow and geombar gives bar plot
 ```
 
 #### Adding more (empty) levels to our dataset
@@ -269,7 +278,8 @@ ggplot(sites,aes(x=dow)) +
 ```{r add levels to our data}
 #Update the levels to include all seven days of the week 
 #  (note we have to start with existing levels)
-levels(sites$dow) <- c(levels(sites$dow),"1","2","6","7")
+levels(sites$dow) <- c(levels(sites$dow),"1","2","6","7") #shows empty days of the week by adding levels
+                  
 
 #Confirm the change
 levels(sites$dow)
@@ -277,7 +287,7 @@ levels(sites$dow)
 #Plot again
 ggplot(sites,aes(x=dow)) +
   geom_bar() + 
-  scale_x_discrete(drop=FALSE)
+  scale_x_discrete(drop=FALSE)  #adding this line makes it not drop empty factors
 
 ```
 
@@ -289,7 +299,10 @@ We can reorder levels simply by overwriting existing levels.
 
 #Reorder by overwriting the column with the existing values 
 # assigned with a new order of levels
-sites$dow <- factor(sites$dow, levels=c("1","2","3","4","5","6","7")) #Or... as.character(seq(1,7))
+sites$dow <- factor(sites$dow, levels=c("1","2","3","4","5","6","7")) 
+        #Or... as.character(seq(1,7))
+            #factor(sites$dow, levels = as.character(seq(1,7))
+        #reordoring the levels - but not changing values in dataset
 
 #See that the levels are updated
 levels(sites$dow)
@@ -328,7 +341,7 @@ Tip:
 usgs_flow_data <- read.csv(
   file = here('Data','Raw','USGS_Site02085000_Flow_Raw.csv'),
   stringsAsFactors = T,
-  colClasses = (c('site_no'='factor'))
+  colClasses = (c('site_no'='factor')) #colClasses how u convert num to factors 
 )
 #Convert date-time field to date
 usgs_flow_data$datetime = mdy(usgs_flow_data$datetime)
