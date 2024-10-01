@@ -16,7 +16,7 @@ editor_options:
 
 ```{r setup workspace, message = FALSE}
 getwd()
-#library(plyr)
+library(plyr)
 library(tidyverse)
 library(lubridate)
 NTL.phys.data.PeterPaul <- read.csv(
@@ -58,9 +58,10 @@ NTL.nutrient.data.PeterPaul$sampledate <- as.Date(NTL.nutrient.data.PeterPaul$sa
 
 NTL.nutrient.data.PeterPaul <- 
   NTL.nutrient.data.PeterPaul %>% #
-  mutate(month = month(sampledate)) %>% #
-  select(lakeid:daynum, month, sampledate:comments) %>% # 
-  drop_na(depth)
+  mutate(month = month(sampledate)) %>% #create month column
+  select(lakeid:daynum, month, sampledate:comments) %>% #select all the columns to reorder month column
+  drop_na(depth) #dropping NAs
+
 
 # Save processed nutrient file
 write.csv(NTL.nutrient.data.PeterPaul, row.names = FALSE, 
@@ -88,16 +89,18 @@ For most situations, data analysis works best when you have organized your data 
 However, there may be situations where we want to reshape our dataset, for example if we want to facet numerical data points by measurement type (more on this in the data visualization unit). We can program this reshaping in a few short lines of code using the package `tidyr`, which is conveniently included in the `tidyverse` package. 
 
 We will work with the new functions from `tidyr`. For gather we will use `pivot_longer` and for spread we will use `pivot_wider`. Note that if you are familiar with `gather` and `spread` will may still use it, they are not going away, but they are not under active development.
+gather / pivot_longer: transforming cols into rows - make data longer
+spread / pivot_wider: rows into cols - make data wider
 
 ```{r gather and spread}
 # Gather nutrient data into one column
 #NTL.nutrient.data.PeterPaul.gathered <- gather(NTL.nutrient.data.PeterPaul.subset, "nutrient", "concentration", tn_ug:po4)
 
 # Gather nutrient data into one column using pivot_longer
-NTL.nutrient.data.PeterPaul.gathered <- pivot_longer(NTL.nutrient.data.PeterPaul.subset,tn_ug:po4, names_to = "nutrient", values_to = "concentration")
+NTL.nutrient.data.PeterPaul.gathered <- pivot_longer(NTL.nutrient.data.PeterPaul.subset,tn_ug:po4, names_to = "nutrient", values_to = "concentration") #spread into two columns with names and vales - more rows
 
-NTL.nutrient.data.PeterPaul.gathered <- subset(NTL.nutrient.data.PeterPaul.gathered, !is.na(concentration))
-count(NTL.nutrient.data.PeterPaul.gathered, nutrient)
+NTL.nutrient.data.PeterPaul.gathered <- subset(NTL.nutrient.data.PeterPaul.gathered, !is.na(concentration)) #getting rid of NAs on the new longer dataset
+count(NTL.nutrient.data.PeterPaul.gathered, nutrient) #will return num of rows with just count, but specifying column will count by nutrients
 
 write.csv(NTL.nutrient.data.PeterPaul.gathered, row.names = FALSE, 
           file = "./Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaulGathered_Processed.csv")
@@ -155,11 +158,11 @@ Litter.2019 <- rbind(Litter.June2016, Litter.July2016, Litter.August2016)
 However, there are 20 months in this dataset, so importing all these files individually would be tedious to code. Here is a more efficient way to import and combine all files.
 
 ```{r import many datasets}
-LitterFiles = list.files(path = "./Data/Raw/NIWO_Litter/", pattern="*.csv", full.names=TRUE)
+LitterFiles = list.files(path = "./Data/Raw/NIWO_Litter/", pattern="*.csv", full.names=TRUE) #list files() - full names of files - read all files in this folder
 LitterFiles
 
 Litter <- LitterFiles %>%
-  plyr::ldply(read.csv)
+  ldply(read.csv) #she didnt have plyr::
 ```
 
 We also have information about individual traps, including the location and type of landcover. Let's join these two datasets. Note that "siteID", "plotID" and "trapID" exist in both datasets, and we can join them by these conditions. Notice the dimensions of the final dataset.
@@ -188,7 +191,7 @@ NTL.PeterPaul.summaries <-
   NTL.phys.nutrient.data.PeterPaul %>%
   filter(depth == 0) %>%
   group_by(lakename, month) %>%
-  filter(!is.na(temperature_C) & !is.na(tn_ug) & !is.na(tp_ug)) %>%
+  filter(!is.na(temperature_C) & !is.na(tn_ug) & !is.na(tp_ug)) %>% #and to get no NAs
   summarise(meantemp = mean(temperature_C), 
             sdtemp = sd(temperature_C), 
             meanTN = mean(tn_ug), 

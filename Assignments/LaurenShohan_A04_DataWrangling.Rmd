@@ -46,16 +46,20 @@ Airdata_pm25_2019 <- read.csv(file = here('./Data/Raw/EPAair_PM25_NC2019_raw.csv
 
 
 #2 
-
+dim(Airdata_03_2018)
+dim(Airdata_03_2019)
+dim(Airdata_pm25_2018)
+dim(Airdata_pm25_2019)
 
 ```
 
 >All four datasets should have the same number of columns but unique record counts (rows). Do your datasets follow this pattern?
-
+Yes, they all have 20 columns and unique record counts for the rows.
 
 ## Wrangle individual datasets to create processed files.
 
 3. Change the Date columns to be date objects.
+
 
 4. Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE
 
@@ -65,13 +69,40 @@ Airdata_pm25_2019 <- read.csv(file = here('./Data/Raw/EPAair_PM25_NC2019_raw.csv
 
 ```{r questions 3 thru 4}
 #3
+class(Airdata_03_2018$Date) #they were factors before 
 
+Airdata_03_2018$Date <- as.Date(Airdata_03_2018$Date, format = "%m/%d/%y")
+Airdata_03_2019$Date <- as.Date(Airdata_03_2019$Date, format = "%m/%d/%y")
+Airdata_pm25_2018$Date <- as.Date(Airdata_pm25_2018$Date, format = "%m/%d/%y")
+Airdata_pm25_2019$Date <- as.Date(Airdata_pm25_2019$Date, format = "%m/%d/%y")
+
+class(Airdata_03_2018$Date)
+class(Airdata_03_2019$Date)
+class(Airdata_pm25_2018$Date)
+class(Airdata_pm25_2019$Date)
 
 #4
 
+Airdata_03_2018_filtered <- Airdata_03_2018 %>% 
+  select(Date,DAILY_AQI_VALUE,Site.Name,
+         AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
 
-#5
+Airdata_03_2019_filtered <- Airdata_03_2019 %>% 
+  select(Date,DAILY_AQI_VALUE,Site.Name,
+         AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
 
+Airdata_pm25_2018_filtered <-  Airdata_pm25_2018 %>% 
+  select(Date,DAILY_AQI_VALUE,Site.Name,
+         AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
+
+Airdata_pm25_2019_filtered <- Airdata_pm25_2019 %>% 
+  select(Date,DAILY_AQI_VALUE,Site.Name,
+         AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
+
+#5 For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5" (all cells in this column should be identical).
+
+Airdata_pm25_2018_filtered$AQS_PARAMETER_DESC
+Airdata_pm25_2019_filtered$AQS_PARAMETER_DESC
 
 #6
 
