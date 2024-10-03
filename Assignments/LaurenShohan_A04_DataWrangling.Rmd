@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling (Fall 2024)"
-author: "Student Name"
+author: "Lauren Shohan"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -33,16 +33,29 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Wr
 #1a 
 library(tidyverse)
 library(lubridate)
+library(here)
 
 #1b 
-getwd()
-here()
+#getwd()
+
+here::here()
 
 #1c 
-Airdata_03_2018 <- read.csv(file = here('./Data/Raw/EPAair_O3_NC2018_raw.csv'), stringsAsFactors = TRUE)
-Airdata_03_2019 <- read.csv(file = here('./Data/Raw/EPAair_O3_NC2019_raw.csv'), stringsAsFactors = TRUE)
-Airdata_pm25_2018 <- read.csv(file = here('./Data/Raw/EPAair_PM25_NC2018_raw.csv'), stringsAsFactors = TRUE)
-Airdata_pm25_2019 <- read.csv(file = here('./Data/Raw/EPAair_PM25_NC2019_raw.csv'), stringsAsFactors = TRUE)
+Airdata_03_2018 <- read.csv(here('./Data/Raw/EPAair_O3_NC2018_raw.csv'), 
+                            stringsAsFactors = TRUE)
+head(Airdata_03_2018)
+
+Airdata_03_2019 <- read.csv(file = here('./Data/Raw/EPAair_O3_NC2019_raw.csv'), 
+                            stringsAsFactors = TRUE)
+head(Airdata_03_2019)
+
+Airdata_pm25_2018 <- read.csv(file = here('./Data/Raw/EPAair_PM25_NC2018_raw.csv'),
+                              stringsAsFactors = TRUE)
+head(Airdata_pm25_2018)
+
+Airdata_pm25_2019 <- read.csv(file = here('./Data/Raw/EPAair_PM25_NC2019_raw.csv'),
+                              stringsAsFactors = TRUE)
+head(Airdata_pm25_2019)
 
 
 #2 
@@ -71,10 +84,10 @@ Yes, they all have 20 columns and unique record counts for the rows.
 #3
 class(Airdata_03_2018$Date) #they were factors before 
 
-Airdata_03_2018$Date <- as.Date(Airdata_03_2018$Date, format = "%m/%d/%y")
-Airdata_03_2019$Date <- as.Date(Airdata_03_2019$Date, format = "%m/%d/%y")
-Airdata_pm25_2018$Date <- as.Date(Airdata_pm25_2018$Date, format = "%m/%d/%y")
-Airdata_pm25_2019$Date <- as.Date(Airdata_pm25_2019$Date, format = "%m/%d/%y")
+Airdata_03_2018$Date <- as.Date(Airdata_03_2018$Date, format = "%m/%d/%Y")
+Airdata_03_2019$Date <- as.Date(Airdata_03_2019$Date, format = "%m/%d/%Y")
+Airdata_pm25_2018$Date <- as.Date(Airdata_pm25_2018$Date, format = "%m/%d/%Y")
+Airdata_pm25_2019$Date <- as.Date(Airdata_pm25_2019$Date, format = "%m/%d/%Y")
 
 class(Airdata_03_2018$Date)
 class(Airdata_03_2019$Date)
@@ -83,28 +96,47 @@ class(Airdata_pm25_2019$Date)
 
 #4
 
-Airdata_03_2018_filtered <- Airdata_03_2018 %>% 
+Airdata_03_2018_subset <- Airdata_03_2018 %>% 
   select(Date,DAILY_AQI_VALUE,Site.Name,
          AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
+head(Airdata_03_2018_subset)
 
-Airdata_03_2019_filtered <- Airdata_03_2019 %>% 
+Airdata_03_2019_subset <- Airdata_03_2019 %>% 
   select(Date,DAILY_AQI_VALUE,Site.Name,
          AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
+head(Airdata_03_2019_subset)
 
-Airdata_pm25_2018_filtered <-  Airdata_pm25_2018 %>% 
+Airdata_pm25_2018_subset <-  Airdata_pm25_2018 %>% 
   select(Date,DAILY_AQI_VALUE,Site.Name,
          AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
+head(Airdata_pm25_2018_subset)
 
-Airdata_pm25_2019_filtered <- Airdata_pm25_2019 %>% 
+Airdata_pm25_2019_subset <- Airdata_pm25_2019 %>% 
   select(Date,DAILY_AQI_VALUE,Site.Name,
          AQS_PARAMETER_DESC,COUNTY,SITE_LATITUDE,SITE_LONGITUDE)
+head(Airdata_pm25_2019_subset)
 
-#5 For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5" (all cells in this column should be identical).
-
-Airdata_pm25_2018_filtered$AQS_PARAMETER_DESC
-Airdata_pm25_2019_filtered$AQS_PARAMETER_DESC
+#5
+#mutating that current column instead of creating new one
+Airdata_pm25_2018_subset <- mutate(Airdata_pm25_2018_subset, AQS_PARAMETER_DESC = 'PM2.5') 
+head(Airdata_pm25_2018_subset)
+     
+Airdata_pm25_2019_subset <- mutate(Airdata_pm25_2019_subset, AQS_PARAMETER_DESC = 'PM2.5')
+head(Airdata_pm25_2019_subset)
 
 #6
+write.csv(Airdata_pm25_2019_subset, row.names = FALSE, 
+          file = './Data/Processed/EPAair_PM25_NC2019_processed.csv')
+
+write.csv(Airdata_pm25_2018_subset, row.names = FALSE, 
+          file = './Data/Processed/EPAair_PM25_NC2018_processed.csv')
+
+
+write.csv(Airdata_03_2019_subset, row.names = FALSE, 
+          file = './Data/Processed/EPAair_O3_NC2019_processed.csv')
+
+write.csv(Airdata_03_2018_subset, row.names = FALSE, 
+          file = './Data/Processed/EPAair_O3_NC2018_processed.csv')
 
 ```
 
@@ -137,20 +169,46 @@ Airdata_pm25_2019_filtered$AQS_PARAMETER_DESC
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC1819_Processed.csv"
 
 ```{r questions 7 thru 11}
-#7 
+#7 -Combine the four datasets with `rbind`. Make sure your column names are identical prior to running this code.
+Airdata_allfour <- rbind(Airdata_03_2018_subset, Airdata_03_2019_subset, Airdata_pm25_2018_subset, Airdata_pm25_2019_subset)
+head(Airdata_allfour)
+
+#8 -Wrangle your new dataset with a pipe function (%>%)
+
+Airdata_allfour_piped <-
+  Airdata_allfour %>%
+  filter(Site.Name %in% c("Linville Falls", 
+                          "Durham Armory", 
+                          "Leggett", 
+                          "Hattie Avenue", 
+                          "Clemmons Middle",
+                          "Mendenhall School",
+                          "Frying Pan Mountain", 
+                          "West Johnston Co.", 
+                          "Garinger High School", 
+                          "Castle Hayne", 
+                          "Pitt Agri. Center", 
+                          "Bryson City", 
+                          "Millbrook School")) %>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarise(mean_daily_AQI = mean(DAILY_AQI_VALUE), 
+            mean_latitude = mean(SITE_LATITUDE), 
+            mean_long = mean(SITE_LONGITUDE)) %>%
+  mutate(Month = month(Date), Year = year(Date))
+head(Airdata_allfour_piped)
+
+#9 Spread your datasets such that AQI values for ozone and PM2.5 are in separate columns
+
+Airdata_allfour_piped_spread <- pivot_wider(Airdata_allfour_piped, names_from = AQS_PARAMETER_DESC, values_from = mean_daily_AQI)
+head(Airdata_allfour_piped_spread)
 
 
-#8 
+#10 - Call up the dimensions of your new tidy dataset.
+dim(Airdata_allfour_piped_spread)
 
-
-#9
-
-
-#10
-
-
-#11
-
+#11 Save your processed dataset with the following file name: "EPAair_O3_PM25_NC1819_Processed.csv"
+write.csv(Airdata_allfour_piped_spread, row.names = FALSE, 
+          file = './Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv')
 
 ```
 
@@ -164,15 +222,21 @@ Airdata_pm25_2019_filtered$AQS_PARAMETER_DESC
 ```{r questions 12 and 13}
 
 #12
+Airdata_piped_spread_summary <- 
+  Airdata_allfour_piped_spread %>% 
+  group_by(Site.Name, Month, Year) %>% 
+  summarise(mean_AQI_ozone = mean(Ozone),
+            mean_AQI_pm25 = mean(PM2.5)) %>% 
+  drop_na(mean_AQI_ozone)
 
+head(Airdata_piped_spread_summary)
 
 #13
-
-
+dim(Airdata_piped_spread_summary)
 
 ```
 
 14. Why did we use the function `drop_na` rather than `na.omit`? Hint: replace `drop_na` with `na.omit` in part 12 and observe what happens with the dimensions of the summary date frame.
 
-> Answer: 
+> Answer: If I use na.omit, the dimensions went from 182 x 5 to 101 x 5. The na.omit deleted entire rows that have NA while with drop_na I can specify which column I want to filter NAs out of and in this case I specified the Ozone column to filter NAs out of so the PM2.5 column kept the NAs.
 
