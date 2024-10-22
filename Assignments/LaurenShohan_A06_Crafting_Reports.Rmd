@@ -3,7 +3,10 @@ title: 'A06 - Crafting Reports'
 author: "Lauren Shohan" 
 date: "Fall 2024"
 output: pdf_document
+toc: TRUE
 ---
+
+\listoffigures
 
 ## Objectives:
 
@@ -35,7 +38,7 @@ Table: EPA Air Quality
 
 |Item Name|Value|
 |--------:|:----|
-|Filename |EPAair_O3_PM25_NC1819_Processed.csv|
+|Filename|EPAair_O3_PM25_NC1819_Processed.csv|
 |Date|2018-2019|
 |Source|EPA Air Quality System (AQS)|
 
@@ -43,9 +46,7 @@ Table: EPA Air Quality
 
 Set the following R code chunk so that it runs when knit, but no messages, errors, or any output is shown. The code itself, however, should be displayed.
 
-```{r project.setup, echo = TRUE, message = FALSE} 
-#echo = TRUE to display code in output document 
-#message = FALSE dont want to display code messages in document
+```{r project.setup, echo=TRUE, message=FALSE}
 #Import libraries
 library(tidyverse)
 library(lubridate)
@@ -94,7 +95,6 @@ summary_Ozone <- epa_data %>%
     mean_Ozone = mean(Ozone)) %>% 
   arrange(mean_Ozone)
 
-#NEW LINE - PAGE BREAK !!!!!
 #Use the `kable` function to produce the 2 tables in markdown format
 kable(summary_PM25, caption = 'Mean Particulates (2.5mm)', col.names = c('County','$\\mu g/m^3$'), digits = 2)
 kable(summary_Ozone, caption = 'Mean Ozone', col.names = c('County','$\\mu g/m^3$'), digits = 2)
@@ -106,7 +106,31 @@ kable(summary_Ozone, caption = 'Mean Ozone', col.names = c('County','$\\mu g/m^3
 ## Task 4: Plots
 
 Below this paragraph, but above the horizonal line (`---`), create two separate code chunks that create boxplots of the distribution of Ozone levels by month using, one for only records collected in 2018 and one for records in 2019. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, align the plots on the left side of the page and set the figure heights so both plots fit on the same page with minimal space remaining. Lastly, add a `fig.cap` chunk option to add a caption (title) to your plot that will display underneath the figure.
+```{r warning=FALSE, include=FALSE}
+epa_data$Month <- factor(epa_data$Month,
+       levels = 1:12, labels = month.abb)
 
+```
+
+```{r echo=FALSE, warning = FALSE, fig.cap= "2018 Monthly Ozone Levels", fig.height=3, fig.width=7}
+epa_data %>%
+  filter(Year == 2018) %>%
+  ggplot(aes(x = Month, y = Ozone)) +
+  geom_boxplot() +
+  labs(title = 'Monthly Ozone concentrations (2018)', 
+       y = expression(paste("Concentration (", mu, "g/m"^3, ")")), 
+       x = 'Month')
+```
+
+```{r echo = FALSE, warning = FALSE, fig.cap = "2019 Monthly Ozone Levels", fig.height=3, fig.width=7}
+epa_data %>%
+  filter(Year == 2019) %>%
+  ggplot(aes(x = Month, y = Ozone)) +
+  geom_boxplot() +
+  labs(title = 'Monthly Ozone concentrations (2019)', 
+       y = expression(paste("Concentration (", mu, "g/m"^3, ")")), 
+       x = 'Month')
+```
 
 ---
 
@@ -117,3 +141,5 @@ Below this paragraph, but above the horizonal line (`---`), create two separate 
 Add a table of contents and list of figures to your document and knit to a PDF. Submit your PDF to Sakai, but also be sure to commit and push your Rmd file used to create this knit document to GitHub. In the section below, add a link to your GitHub repository.
 
 ## Git Repository
+[https://github.com/lshohan12/EDE_Fall2024](https://github.com/lshohan12/EDE_Fall2024)
+
