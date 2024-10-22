@@ -1,0 +1,76 @@
+---
+title: "My Example Document"
+subtitle: 'My Subtitle here'
+author: "Lauren Shohan"
+date: "2024-10-22"
+output: pdf_document
+toc: true
+---
+
+\listoffigures
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#r setup - makes it in r
+#include = 
+#echo = 
+
+#toc creates a table of contents
+
+# \list of figures creates almost a toc of the figures 
+# \newpage will insert a page break 
+
+#help -> r markdown quick reference
+
+```
+
+## R Markdown
+### Sub - header
+#### Another smaller sub header
+
+> This a block quote !!
+
+1. step 1
+2. step 2
+3. step 3
+
+* first bullet
+* second bullet 
+  + sub bullet 
+  
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+>creates a link into clickable link
+[mylink](http://rmarkdown.rstudio.com).
+
+>inserting image - can also pass a web address but doenst always work :( 
+![my image](img/rmarkdownflow.png)
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r demo chunk, echo=TRUE}
+#gear option !!! greats different {} 
+#echo = FALSE  -> just sends output 
+```
+
+

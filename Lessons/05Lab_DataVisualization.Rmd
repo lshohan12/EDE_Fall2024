@@ -42,17 +42,17 @@ The expression function can be used when you want to add mathematical symbols an
 #Create a plot
 Plot_text <-
 ggplot(data=data.frame(x=0,y=0))+
-  geom_point(aes(x=x,y=y)) +
+  geom_point(aes(x=x,y=y)) + #this line and above plots one point 
   geom_text(
     x=0,
-    y=0.025,
+    y=0.025, #adding text a little above original point moving Y axis wise
     label=expression(paste("Mean is ", mu,",", R^{2},'=0.6'))
-    )
+    )  #expression funct - pasting all these characters together - mu will be converted to greek letter under expression function
 
 #Print the plot
 print(Plot_text)
 
-#Save the plot
+#Save the plot - saves somewhere and can download and save
 ggsave(
   filename = "./Output/Plot_text.jpg",
   plot = Plot_text, 
@@ -93,25 +93,47 @@ Say we want to plot the number of records each month in the Peter/Paul lakes dat
 
 ```{r Plot the number of records by month}
 #What kind of values are months?
-
+class(PeterPaul.chem.nutrients$month) #integer
 
 #List unique values
-
+unique(PeterPaul.chem.nutrients$month) #5,6,7,8,9,10,11,2
 
 #Plot how many Lake observations occur each month
-
+PeterPaul.chem.nutrients %>%
+  ggplot() +
+  geom_bar(aes(x = month)) #will give frequency - what will be x axis? variable u want to plot freq for
 
 #Convert month to a factor -- with 12 levels, labelled with month names
-
+PeterPaul.chem.nutrients$month <- factor(PeterPaul.chem.nutrients$month,
+       levels = 1:12, #12 months 
+       labels = month.abb) #month.abb - r variable that has jan - dec variables
+        
 
 #Try again: Plot how many Lake observations occur each month
+PeterPaul.chem.nutrients %>%
+  ggplot() +
+  geom_bar(aes(x = month)) 
 
+ggplot(
+  PeterPaul.chem.nutrients,
+  aes(x=factor(month, levels = 1:12, labels = month.abb))
+) +
+  geom_bar()
 
 #Alter to include missing months
+PeterPaul.chem.nutrients %>%
+  ggplot() +
+  geom_bar(aes(x = month)) +
+  scale_x_discrete(drop = F) #makes sure missing levels arent dropped
 
+ggplot(
+  PeterPaul.chem.nutrients,
+  aes(x=factor(month, levels = 1:12, labels = month.abb))) +
+  scale_x_discrete(drop= F) +
+  geom_bar()
 
 #Tidy up the code
-
+the_plot <- PeterPaul.chem.nutrients
 
 ```
 
@@ -136,7 +158,7 @@ Resource:
 
 ```{r More on themes}
 #Create a base plot to play with
-surface_temp_1999_plot <- PeterPaul.chem.nutrients %>% 
+surface_temp_1999_plot <- PeterPaul.chem.nutrients %>% #assigning it into variable
   filter(depth == 0 & year4 == 1999) %>% 
   ggplot(
     mapping = aes(
@@ -234,8 +256,21 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # 1. 
 # Plot surface temperatures by day of  year. 
 # Color your points by year, and facet by lake in two rows.
-# Change the ylab name
+# Change the ylab name - yaxis title 
 
+surface_temp_by_day_plot <- PeterPaul.chem.nutrients %>%
+  filter(depth == 0) %>%
+  ggplot( #once you start ggplot use +
+    mapping = aes( #defining aes in ggplot defines all layers
+      x=daynum,
+      y=temperature_C,
+      color=year4) #color inside aes - color coding plot based on that column 
+    ) + 
+  geom_point() +
+  facet_wrap(facets = vars(lakename), nrow = 2) + #ncol = 2
+  ylab('Temperature [C]') +
+  labs(color = 'Year')
+  
 
 #2. 
 # Plot temperature by date. Color your points by depth.
@@ -243,7 +278,15 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Change the color palette to magma and play with direction (+- 1), which one makes more sense?
 # Change x axis to include marker/labels every 5 years
 
-
+temperature_by_date_depth <- PeterPaul.chem.nutrients %>%
+  ggplot(aes(
+      x = sampledate,
+      y = temperature_C,
+      color = depth)) +
+  geom_point(size = 0.5) +
+  scale_color_viridis(option = 'magma', direction = -1) + #better representation of temperature
+  scale_x_date(date_breaks = '5 years', date_labels = '%Y') #scale x date funct just understands date object
+temperature_by_date_depth
 
 ```
 ## Plotting the relationship between two continuous variables: Scatterplot
@@ -256,7 +299,16 @@ Exercise: Plot relationships between air quality measurements
 # Plot AQI values for ozone by PM2.5, colored by latitude 
 # Make the points 50 % transparent
 # Add a line of best fit for the linear regression of these variables.
-
+EPAair %>%
+  ggplot(aes(x = PM2.5, 
+             y = Ozone, 
+             color = mean_Lat),
+         alpha = 0.5) +
+  geom_point() +
+  geom_smooth(
+    method = lm,
+    se = FALSE
+  )
 
 
 
@@ -271,7 +323,6 @@ Exercise: Plot distributions of AQI values for EPAair.
 # 4. 
 # Create several types of plots depicting PM2.5, divided by year. 
 # Choose which plot displays the data best and justify your choice. 
-
 
 
 ```

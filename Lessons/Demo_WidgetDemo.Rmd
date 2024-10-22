@@ -1,0 +1,40 @@
+---
+title: Interactive Rmd
+output: html_document
+runtime: shiny
+---
+  
+```{r, echo = FALSE}
+#normal one
+numericInput(
+  inputId = "n",  
+  label = "How many cars?", 
+  value = 5)
+
+renderTable({
+  head(cars, input$n)
+  })    
+
+
+
+#fun one 
+#run time shiny changes knit ability - push run document at top
+#numeric input is a widget
+
+numericInput(
+  inputId = "n",   #identifier of numeric input
+  label = "How many cars?", 
+  value = 5)
+
+#adds another input 
+numericInput(
+  inputId = "h",   
+  label = "How many cars?", 
+  value = 5)
+
+renderTable({
+  head(cars, input$n - input$h) #can have multiple inputs
+  })    
+
+```
+
